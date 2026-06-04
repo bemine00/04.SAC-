@@ -8,6 +8,8 @@ import requests  # <--- [추가] API 호출을 위해 반드시 필요!
 from requests.auth import HTTPBasicAuth  # <--- 이 줄을 반드시 추가해야 합니다!
 from datetime import datetime
 from PIL import Image
+from datetime import datetime
+import pytz
 
 # --- 설정 및 경로 ---
 st.set_page_config(page_title="용접작업안전승인관리시스템", layout="wide")
@@ -266,6 +268,9 @@ if menu == "엔지니어 요청":
                 # 1. DB 저장
                 conn = sqlite3.connect(DB_NAME)
                 c = conn.cursor()
+                # 한국 시간 구하기
+                kst = pytz.timezone('Asia/Seoul')
+                kor_time = datetime.now(kst).strftime("%Y-%m-%d %H:%M:%S")
                 c.execute(
                     "INSERT INTO logs (service_code, site, eng_name, eng_phone, status, created_at) VALUES (?,?,?,?,?,?)",
                     (
@@ -274,7 +279,7 @@ if menu == "엔지니어 요청":
                         eng_name,
                         eng_phone,
                         "대기",
-                        datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                        kor_time(),
                     ),
                 )
                 conn.commit()
