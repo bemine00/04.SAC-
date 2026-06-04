@@ -363,7 +363,7 @@ elif menu in ["관리자 대시보드", "관리자용 데이터 센터"]:
                         #conn.execute(
                             #"UPDATE logs SET status='승인', admin_comment=?, approved_at=? WHERE id=?",
                             #(cmt, datetime.now().strftime("%H:%M:%S"), row["id"]),
-                        )
+                        #)
                         #conn.commit()
                         #conn.close()
                         # 문자 발송 실행 확인용 로그
