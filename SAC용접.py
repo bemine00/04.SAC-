@@ -347,11 +347,12 @@ elif menu in ["관리자 대시보드", "관리자용 데이터 센터"]:
                     c1, c2 = st.columns(2)
 
                     if c1.button("✅ 승인", key=f"app_{row['id']}"):
-                        # [단계 1] 문자 발송 (가장 먼저 실행)
+                        
+                        # 1. 먼저 문자 발송 실행
                         msg = f"[작업승인] {row['service_code']} 현장 용접 작업 승인"
                         sms_success = send_prio_sms(row["id"], row["eng_phone"], msg)
                         
-                        # [단계 2] 결과에 따른 DB 업데이트
+                        # 2. 결과 저장
                         status_text = "성공" if sms_success else "실패"
                         
                         conn = sqlite3.connect(DB_NAME)
@@ -362,13 +363,14 @@ elif menu in ["관리자 대시보드", "관리자용 데이터 센터"]:
                         conn.commit()
                         conn.close()
                         
-                        # [단계 3] 결과 피드백 및 새로고침
+                        # 3. 사용자에게 즉시 결과 표시
                         if sms_success:
-                            st.success("승인 및 문자 발송 완료!")
+                            st.success("✅ 승인 완료! 문자 발송 성공")
                         else:
-                            st.error("승인은 되었으나 문자 발송 실패")
+                            st.error("⚠️ 승인 완료, 하지만 문자 발송 실패 (로그 확인 필요)")
                         
-                        st.rerun() # 모든 처리가 끝난 후 페이지 갱신
+                        # 4. 새로고침 (이전 코드의 print는 삭제하고 st.rerun만 남김)
+                        st.rerun()
 
                     # 이 'if'가 위 'if'와 정확히 같은 선상에 있어야 합니다!
                     if c2.button("❌ 작업중지", key=f"rej_{row['id']}"):
