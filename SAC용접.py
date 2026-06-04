@@ -169,12 +169,18 @@ def send_prio_sms(log_id, to_phone, message_text):
 
     try:
         response = requests.post(url, json=payload, headers=headers, timeout=10)
+        
+        # [수정] 응답 내용을 상세히 출력하도록 변경
         print(f"DEBUG: 서버응답코드={response.status_code}, 상세내용={response.text}")
 
-        status = (
-            "성공" if response.status_code == 200 else f"실패({response.status_code})"
-        )
+        # [수정] 200이 아닐 경우 에러 내용을 status에 담아서 확인
+        if response.status_code == 200:
+            status = "성공"
+        else:
+            status = f"실패({response.status_code}): {response.text[:20]}" # 에러 메시지 앞부분만 저장
+            
     except Exception as e:
+        print(f"DEBUG: 요청 중 예외 발생: {str(e)}") # 예외 발생 시 로그 출력
         status = f"오류:{type(e).__name__}"
 
     if log_id != -1:
