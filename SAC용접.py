@@ -5,6 +5,7 @@ import zipfile
 import io
 import os
 import requests  # <--- [추가] API 호출을 위해 반드시 필요!
+from datetime import datetime, timedelta
 from requests.auth import HTTPBasicAuth  # <--- 이 줄을 반드시 추가해야 합니다!
 from datetime import datetime
 from PIL import Image
@@ -63,6 +64,10 @@ st.markdown(
 
 
 # --- 유틸리티 함수 ---
+def kor_time():
+    # 한국 시간은 UTC보다 9시간 빠릅니다.
+    return datetime.utcnow() + timedelta(hours=9)
+
 def init_db():
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
