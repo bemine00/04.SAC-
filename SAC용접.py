@@ -364,7 +364,9 @@ elif menu in ["관리자 대시보드", "관리자용 데이터 센터"]:
                         )
                         conn.commit()
                         conn.close()
-
+                        # 문자 발송 실행 확인용 로그
+                        print("DEBUG: 문자 발송 함수 실행 전") # [추가]
+                        
                         # 1. 엔지니어에게 결과 알림
                         msg = f"[작업승인] {row['service_code']} 현장 용접 작업 승인, 안전하게 작업바랍니다."
                         send_prio_sms(row["id"], row["eng_phone"], msg)
