@@ -272,7 +272,7 @@ if menu == "엔지니어 요청":
                         eng_name,
                         eng_phone,
                         "대기",
-                        kor_time(),
+                        kor_time,
                     ),
                 )
                 conn.commit()
