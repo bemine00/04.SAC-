@@ -145,10 +145,12 @@ def notify_all_admins(log_id, message_text):
 
 
 def send_prio_sms(log_id, to_phone, message_text):
+    print(f"DEBUG: 문자 발송 시작 - 대상: {to_phone}") # 로그 확인용
     token = get_access_token()
     if not token:
+        print("DEBUG: 토큰 발급 실패") # 토큰 발급 실패 확인
         return False
-
+    
     url = "https://message.ppurio.com/v1/message"
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
 
