@@ -295,7 +295,8 @@ if menu == "엔지니어 요청":
                     f"요청자: {eng_name}\n"
                     f"거점: {site}\n"
                     f"서비스코드: {code}\n"
-                    f"바로가기: {http://localhost:8501/}?code={code}\n"  # <--- 이 부분이 핵심!
+                    app_url = "https://jjpg4deafdyh9jvtc8ync9.streamlit.app/"
+                    f"바로가기: {app_url}?code={code}\n"
                     f"관리자 페이지에서 확인 후 승인해 주세요."
                 )
                 send_prio_sms(code, "01020858775", admin_msg)
