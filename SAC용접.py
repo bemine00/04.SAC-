@@ -345,8 +345,7 @@ elif menu in ["관리자 대시보드", "관리자용 데이터 센터"]:
                     c1, c2 = st.columns(2)
 
                     if c1.button("✅ 승인", key=f"app_{row['id']}"):
-                        st.write("버튼이 눌렸습니다!") # 화면에 바로 출력
-                        print("DEBUG: 버튼이 눌렸습니다.") # 로그창에 출력
+                        # 1. DB 업데이트 먼저 수행
                         conn = sqlite3.connect(DB_NAME)
                         conn.execute(
                             "UPDATE logs SET status='승인', admin_comment=?, approved_at=? WHERE id=?",
@@ -354,16 +353,18 @@ elif menu in ["관리자 대시보드", "관리자용 데이터 센터"]:
                         )
                         conn.commit()
                         conn.close()
-                        # 문자 발송 실행 확인용 로그
-                        print("DEBUG: 문자 발송 함수 실행 전") # [추가]
                         
-                        # 1. 엔지니어에게 결과 알림
-                        msg = f"[작업승인] {row['service_code']} 현장 용접 작업 승인, 안전하게 작업바랍니다."
-                        send_prio_sms(row["id"], row["eng_phone"], msg)
-                        # 2. 관리자 전체에게 상황 공유 (기존 고정 번호 대신 함수 호출)
-                        admin_msg = f"[승인완료] 신규 요청건(ID:{row['service_code']})이 승인되었습니다."
-                        notify_all_admins(-1, admin_msg)  # 전체 관리자 알림
-
+                        # 2. 강제 로그 출력 (확인용)
+                        print(f"DEBUG: 데이터베이스 업데이트 완료, 이제 문자 발송 시작 - ID: {row['id']}")
+                        
+                        # 3. 함수 실행 및 결과 수신
+                        msg = f"[작업승인] {row['service_code']} 현장 용접 작업 승인"
+                        sms_result = send_prio_sms(row["id"], row["eng_phone"], msg)
+                        
+                        # 4. 결과 로그 출력
+                        print(f"DEBUG: 문자 발송 함수 호출 끝, 결과: {sms_result}")
+                        
+                        st.success("승인 처리 완료")
                         st.rerun()
 
                     # 이 'if'가 위 'if'와 정확히 같은 선상에 있어야 합니다!
