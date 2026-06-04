@@ -147,6 +147,7 @@ def notify_all_admins(log_id, message_text):
 def send_prio_sms(log_id, to_phone, message_text):
     print(f"DEBUG: 문자 발송 시작 - 대상: {to_phone}") # 로그 확인용
     token = get_access_token()
+    print(f"DEBUG: 발급받은 토큰값: {token}") # 이 줄 추가
     if not token:
         print("DEBUG: 토큰 발급 실패") # 토큰 발급 실패 확인
         return False
