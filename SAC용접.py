@@ -1,4 +1,6 @@
 import streamlit as st
+print("--- [알림] 시스템이 정상적으로 로드되었습니다 ---")
+import streamlit as st
 import sqlite3
 import pandas as pd
 import zipfile
