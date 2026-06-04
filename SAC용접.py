@@ -357,13 +357,15 @@ elif menu in ["관리자 대시보드", "관리자용 데이터 센터"]:
                     c1, c2 = st.columns(2)
 
                     if c1.button("✅ 승인", key=f"app_{row['id']}"):
-                        conn = sqlite3.connect(DB_NAME)
-                        conn.execute(
-                            "UPDATE logs SET status='승인', admin_comment=?, approved_at=? WHERE id=?",
-                            (cmt, datetime.now().strftime("%H:%M:%S"), row["id"]),
+                        st.write("버튼이 눌렸습니다!") # 화면에 바로 출력
+                        print("DEBUG: 버튼이 눌렸습니다.") # 로그창에 출력
+                        #conn = sqlite3.connect(DB_NAME)
+                        #conn.execute(
+                            #"UPDATE logs SET status='승인', admin_comment=?, approved_at=? WHERE id=?",
+                            #(cmt, datetime.now().strftime("%H:%M:%S"), row["id"]),
                         )
-                        conn.commit()
-                        conn.close()
+                        #conn.commit()
+                        #conn.close()
                         # 문자 발송 실행 확인용 로그
                         print("DEBUG: 문자 발송 함수 실행 전") # [추가]
                         
