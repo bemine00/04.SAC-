@@ -145,17 +145,18 @@ def notify_all_admins(log_id, message_text):
 
 
 def send_prio_sms(log_id, to_phone, message_text):
-    print(f"DEBUG: 문자 발송 시작 - 대상: {to_phone}") # 로그 확인용
+    print("DEBUG: [함수 진입] 문자 발송 시작") 
     token = get_access_token()
-    print(f"DEBUG: 발급받은 토큰값: {token}") # 이 줄 추가
+    
     if not token:
-        print("DEBUG: 토큰 발급 실패") # 토큰 발급 실패 확인
+        print("DEBUG: [실패] 토큰을 가져오지 못했습니다.")
         return False
     
+    print(f"DEBUG: [진행] 토큰 획득 성공: {token[:10]}...") 
+
     url = "https://message.ppurio.com/v1/message"
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
 
-    # 서버 요구사항(targets 리스트 구조)에 맞게 최종 수정
     payload = {
         "account": "dajontec",
         "messageType": "LMS" if len(message_text.encode("euc-kr")) > 80 else "SMS",
@@ -164,33 +165,20 @@ def send_prio_sms(log_id, to_phone, message_text):
         "content": message_text,
         "duplicateFlag": "N",
         "targetCount": 1,
-        "refKey": str(log_id),  # 고유 참조키 추가
+        "refKey": str(log_id),
     }
 
     try:
+        print("DEBUG: [요청] 뿌리오 서버로 전송 시도...")
         response = requests.post(url, json=payload, headers=headers, timeout=10)
+        print(f"DEBUG: [응답] 상태코드={response.status_code}, 상세={response.text}")
         
-        # [수정] 응답 내용을 상세히 출력하도록 변경
-        print(f"DEBUG: 서버응답코드={response.status_code}, 상세내용={response.text}")
-
-        # [수정] 200이 아닐 경우 에러 내용을 status에 담아서 확인
-        if response.status_code == 200:
-            status = "성공"
-        else:
-            status = f"실패({response.status_code}): {response.text[:20]}" # 에러 메시지 앞부분만 저장
-            
+        status = "성공" if response.status_code == 200 else f"실패({response.status_code})"
     except Exception as e:
-        print(f"DEBUG: 요청 중 예외 발생: {str(e)}") # 예외 발생 시 로그 출력
-        status = f"오류:{type(e).__name__}"
-
-    if log_id != -1:
-        conn = sqlite3.connect(DB_NAME)
-        conn.execute("UPDATE logs SET sms_status = ? WHERE id = ?", (status, log_id))
-        conn.commit()
-        conn.close()
-
+        print(f"DEBUG: [예외] 요청 중 에러 발생: {str(e)}")
+        status = f"오류"
+        
     return status == "성공"
-
 
 # --- 인증 함수 ---
 def check_password():
@@ -359,13 +347,13 @@ elif menu in ["관리자 대시보드", "관리자용 데이터 센터"]:
                     if c1.button("✅ 승인", key=f"app_{row['id']}"):
                         st.write("버튼이 눌렸습니다!") # 화면에 바로 출력
                         print("DEBUG: 버튼이 눌렸습니다.") # 로그창에 출력
-                        #conn = sqlite3.connect(DB_NAME)
-                        #conn.execute(
-                            #"UPDATE logs SET status='승인', admin_comment=?, approved_at=? WHERE id=?",
-                            #(cmt, datetime.now().strftime("%H:%M:%S"), row["id"]),
-                        #)
-                        #conn.commit()
-                        #conn.close()
+                        conn = sqlite3.connect(DB_NAME)
+                        conn.execute(
+                            "UPDATE logs SET status='승인', admin_comment=?, approved_at=? WHERE id=?",
+                            (cmt, datetime.now().strftime("%H:%M:%S"), row["id"]),
+                        )
+                        conn.commit()
+                        conn.close()
                         # 문자 발송 실행 확인용 로그
                         print("DEBUG: 문자 발송 함수 실행 전") # [추가]
                         
