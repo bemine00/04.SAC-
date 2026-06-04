@@ -290,12 +290,12 @@ if menu == "엔지니어 요청":
                         )
 
                 # 3. 알림 발송 (문자 간격 주의하여 줄바꿈 적용)
+                app_url = "https://jjpg4deafdyh9jvtc8ync9.streamlit.app/"
                 admin_msg = (
                     f"[서남부 SAC] 용접 안전 승인 요청\n"
                     f"요청자: {eng_name}\n"
                     f"거점: {site}\n"
                     f"서비스코드: {code}\n"
-                    app_url = "https://jjpg4deafdyh9jvtc8ync9.streamlit.app/"
                     f"바로가기: {app_url}?code={code}\n"
                     f"관리자 페이지에서 확인 후 승인해 주세요."
                 )
