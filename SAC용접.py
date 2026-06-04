@@ -344,7 +344,8 @@ elif menu in ["관리자 대시보드", "관리자용 데이터 센터"]:
                     cmt = st.text_input("관리자 코멘트", key=f"cmt_{row['id']}")
                     c1, c2 = st.columns(2)
 
-                   if c1.button("✅ 승인", key=f"app_{row['id']}"):
+                    # [수정된 승인 버튼 로직]
+                    if c1.button("✅ 승인", key=f"app_{row['id']}"):
                         # 1. 먼저 문자 발송 시도
                         msg = f"[작업승인] {row['service_code']} 현장 용접 작업 승인"
                         sms_success = send_prio_sms(row["id"], row["eng_phone"], msg)
