@@ -344,25 +344,29 @@ elif menu in ["관리자 대시보드", "관리자용 데이터 센터"]:
                     cmt = st.text_input("관리자 코멘트", key=f"cmt_{row['id']}")
                     c1, c2 = st.columns(2)
 
-                    # [수정된 승인 버튼 로직]
                     if c1.button("✅ 승인", key=f"app_{row['id']}"):
-                        # 1. 먼저 문자 발송 시도
+                        # [단계 1] 문자 발송 (가장 먼저 실행)
                         msg = f"[작업승인] {row['service_code']} 현장 용접 작업 승인"
                         sms_success = send_prio_sms(row["id"], row["eng_phone"], msg)
                         
-                        new_status = "성공" if sms_success else "실패"
+                        # [단계 2] 결과에 따른 DB 업데이트
+                        status_text = "성공" if sms_success else "실패"
                         
-                        # 2. DB 업데이트 (문자 상태 포함)
                         conn = sqlite3.connect(DB_NAME)
                         conn.execute(
                             "UPDATE logs SET status='승인', admin_comment=?, approved_at=?, sms_status=? WHERE id=?",
-                            (cmt, datetime.now().strftime("%H:%M:%S"), new_status, row["id"]),
+                            (cmt, datetime.now().strftime("%H:%M:%S"), status_text, row["id"]),
                         )
                         conn.commit()
                         conn.close()
                         
-                        st.success(f"승인 처리 완료 (문자발송: {new_status})")
-                        st.rerun()
+                        # [단계 3] 결과 피드백 및 새로고침
+                        if sms_success:
+                            st.success("승인 및 문자 발송 완료!")
+                        else:
+                            st.error("승인은 되었으나 문자 발송 실패")
+                        
+                        st.rerun() # 모든 처리가 끝난 후 페이지 갱신
 
                     # 이 'if'가 위 'if'와 정확히 같은 선상에 있어야 합니다!
                     if c2.button("❌ 작업중지", key=f"rej_{row['id']}"):
