@@ -101,32 +101,20 @@ def save_optimized_image(uploaded_file, save_path):
 
 def get_access_token():
     url = "https://message.ppurio.com/v1/token"
-    # 아이디와 키를 결합하여 헤더에 전달하는 표준 방식입니다.
-    # 사용자의 아이디와 인증키를  ':'로 연결합니다.
-    import base64
-
-    user_id = "dajontec"
-    api_key = "96ecf6a4ee6a1c76f56aa6bd5843e4ff2d06c8e95900980edf1fdeb231f051be"
-
-    # 인증 정보를 base64로 인코딩
-    auth_str = f"{user_id}:{api_key}"
-    encoded_auth = base64.b64encode(auth_str.encode()).decode()
-
-    headers = {
-        "Authorization": f"Basic {encoded_auth}",
-        "Content-Type": "application/json",
-    }
-
-    try:
-        response = requests.post(url, headers=headers, timeout=10)
-        print(f"DEBUG: Status={response.status_code}, Body={response.text}")
-
-        if response.status_code == 200:
-            return response.json().get("token")
-        else:
-            return None
-    except Exception as e:
-        print(f"오류: {e}")
+    # 1. 인증 정보 가져오기
+    user_id = st.secrets["PPURIO_USER"]
+    api_key = st.secrets["PPURIO_TOKEN"]
+    
+    # 2. 인증 객체 생성
+    auth = HTTPBasicAuth(user_id, api_key)
+    
+    # 3. 토큰 발급 요청
+    response = requests.post(url, auth=auth)
+    
+    if response.status_code == 200:
+        return response.json().get("token")
+    else:
+        # 실패 시에는 적절한 에러 로그만 남기거나 멈추는 것이 좋습니다.
         return None
 
 
